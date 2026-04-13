@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"C:/Users/willy/.config/herd/bin/php.bat\" artisan:*)",
+      "Bash(\"C:/Users/willy/.config/herd/bin/php.bat\" -r \"require 'vendor/autoload.php'; echo 'Autoload OK';\")"
+    ]
+  }
+}

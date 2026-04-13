@@ -17,7 +17,25 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // Ruolo utente — gestito con enum semplice invece di package complessi (KISS)
+            $table->enum('role', ['administrator', 'supervisor', 'operator', 'client'])
+                  ->default('client');
+
+            // Azienda di appartenenza (nullable: l'admin di sistema non ha company)
+            // FK verso companies aggiunta nello STEP 2 con migration separata
+            $table->unsignedBigInteger('company_id')->nullable();
+
+            // Visibilità ticket: true = vede tutti i ticket della sua company, false = solo i propri
+            $table->boolean('can_view_company_tickets')->default(false);
+
+            // Campi 2FA — predisposti per future implementazioni, non attivi nell'MVP
+            $table->text('two_factor_secret')->nullable();
+            $table->text('two_factor_recovery_codes')->nullable();
+
             $table->rememberToken();
+            // Soft delete — nessuna cancellazione fisica degli utenti
+            $table->softDeletes();
             $table->timestamps();
         });
 
@@ -42,8 +60,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };
