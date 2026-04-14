@@ -59,8 +59,9 @@ return [
         'updated' => 'Abbonamento aggiornato con successo.',
         'deleted' => 'Abbonamento eliminato con successo.',
 
-        'warning_low_minutes'  => 'Attenzione: i minuti residui sono sotto il 20% del piano.',
-        'minutes_exhausted'    => 'I minuti dell\'abbonamento sono esauriti.',
+        'warning_low_minutes'    => 'Attenzione: i minuti residui sono sotto il 20% del piano.',
+        'minutes_exhausted'      => 'Attenzione: i minuti di questa azienda sono esauriti. Il lavoro prosegue ma i minuti sono negativi.',
         'no_active_subscription' => 'Nessun abbonamento attivo.',
+        'client_blocked'         => 'Il tuo abbonamento è esaurito o non attivo. Contatta il supporto per rinnovare o acquistare minuti extra.',
     ],
 ];

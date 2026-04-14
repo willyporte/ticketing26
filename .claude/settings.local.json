@@ -2,7 +2,16 @@
   "permissions": {
     "allow": [
       "Bash(\"C:/Users/willy/.config/herd/bin/php.bat\" artisan:*)",
-      "Bash(\"C:/Users/willy/.config/herd/bin/php.bat\" -r \"require 'vendor/autoload.php'; echo 'Autoload OK';\")"
+      "Bash(\"C:/Users/willy/.config/herd/bin/php.bat\" -r \"require 'vendor/autoload.php'; echo 'Autoload OK';\")",
+      "Bash(C:/Users/willy/.config/herd/bin/php.bat artisan:*)",
+      "Bash(C:/Users/willy/.config/herd/bin/php.bat /c/laravel/ticketing/artisan filament:list-panels)",
+      "Bash(C:/Users/willy/.config/herd/bin/php.bat /c/laravel/ticketing/artisan filament:about)",
+      "Bash(C:/Users/willy/.config/herd/bin/php.bat:*)",
+      "Bash(grep -rn '$navigationIcon' /c/laravel/ticketing/vendor/filament/)",
+      "Bash(xargs grep:*)",
+      "Bash(grep -rn 'generateFormMethodBody\\\\|return \\\\$schema' /c/laravel/ticketing/vendor/filament/)",
+      "Bash(xargs -I{} basename {})",
+      "Bash(grep:*)"
     ]
   }
 }

@@ -15,6 +15,7 @@ return [
         'can_view_company_tickets'  => 'Can view all company tickets',
         'created_at'                => 'Created at',
         'updated_at'                => 'Updated at',
+        'password_hint_edit'        => 'Leave blank to keep current password',
     ],
 
     'roles' => [

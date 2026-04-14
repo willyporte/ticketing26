@@ -14,6 +14,7 @@ return [
         'can_view_company_tickets'  => 'Vede tutti i ticket aziendali',
         'created_at'                => 'Creato il',
         'updated_at'                => 'Aggiornato il',
+        'password_hint_edit'        => 'Lascia vuoto per non modificare',
     ],
 
     'roles' => [

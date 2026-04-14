@@ -33,14 +33,16 @@ return [
     ],
 
     'actions' => [
-        'create'   => 'Nuovo ticket',
-        'edit'     => 'Modifica ticket',
-        'delete'   => 'Elimina ticket',
-        'close'    => 'Chiudi ticket',
-        'reopen'   => 'Riapri ticket',
-        'assign'   => 'Assegna',
-        'take'     => 'Prendi in carico',
-        'resolve'  => 'Segna come risolto',
+        'create'         => 'Nuovo ticket',
+        'edit'           => 'Modifica ticket',
+        'delete'         => 'Elimina ticket',
+        'close'          => 'Chiudi ticket',
+        'reopen'         => 'Riapri ticket',
+        'assign'         => 'Assegna',
+        'take'           => 'Prendi in carico',
+        'resolve'        => 'Segna come risolto',
+        'waiting_client' => 'In attesa cliente',
+        'resume'         => 'Riprendi lavorazione',
     ],
 
     'attachments' => [
@@ -102,13 +104,16 @@ return [
     ],
 
     'messages' => [
-        'created'  => 'Ticket creato con successo.',
-        'updated'  => 'Ticket aggiornato con successo.',
-        'deleted'  => 'Ticket eliminato con successo.',
-        'closed'   => 'Ticket chiuso con successo.',
-        'reopened' => 'Ticket riaperto con successo.',
-        'resolved' => 'Ticket segnato come risolto.',
-        'assigned' => 'Ticket assegnato con successo.',
+        'created'        => 'Ticket creato con successo.',
+        'updated'        => 'Ticket aggiornato con successo.',
+        'deleted'        => 'Ticket eliminato con successo.',
+        'closed'         => 'Ticket chiuso con successo.',
+        'reopened'       => 'Ticket riaperto con successo.',
+        'resolved'       => 'Ticket segnato come risolto.',
+        'assigned'       => 'Ticket assegnato con successo.',
+        'taken'          => 'Ticket preso in carico.',
+        'waiting_client' => 'Ticket in attesa di risposta dal cliente.',
+        'resumed'        => 'Lavorazione ripresa.',
 
         'subscription_exhausted' => 'Il tuo abbonamento è esaurito o non attivo. Contatta il supporto per rinnovare o acquistare minuti extra.',
         'minutes_warning'        => 'Attenzione: i minuti residui di questa azienda sono quasi esauriti.',
