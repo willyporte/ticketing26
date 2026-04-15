@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Storage;
 
 Route::get('/', fn () => view('front.home'))->name('home');
 
-Route::get('/come-funziona', fn () => view('front.home'))->name('come-funziona');
-Route::get('/contattaci', fn () => view('front.home'))->name('contattaci');
-Route::get('/privacy-policy', fn () => view('front.home'))->name('privacy-policy');
-Route::get('/termini', fn () => view('front.home'))->name('termini');
+Route::get('/come-funziona', fn () => view('front.come-funziona'))->name('come-funziona');
+Route::get('/contattaci', fn () => view('front.contattaci'))->name('contattaci');
+Route::get('/privacy-policy', fn () => view('front.privacy-policy'))->name('privacy-policy');
+Route::get('/termini', fn () => view('front.termini'))->name('termini');
 
 // ─── Download allegato (protetto da autenticazione e Policy) ─────────────────
 Route::middleware('auth')->get('/attachments/{attachment}/download', function (TicketAttachment $attachment) {

@@ -2,6 +2,14 @@
 
 namespace App\Models;
 
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\Email\Concerns\InteractsWithEmailAuthentication;
+use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,9 +17,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements
+    FilamentUser,
+    HasAppAuthentication,
+    HasAppAuthenticationRecovery,
+    HasEmailAuthentication
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory,
+        Notifiable,
+        SoftDeletes,
+        InteractsWithAppAuthentication,
+        InteractsWithAppAuthenticationRecovery,
+        InteractsWithEmailAuthentication;
 
     protected $fillable = [
         'name',
@@ -23,6 +40,10 @@ class User extends Authenticatable
         'avatar_path',
         'two_factor_secret',
         'two_factor_recovery_codes',
+        // Colonne MFA native Filament v5
+        'app_authentication_secret',
+        'app_authentication_recovery_codes',
+        'has_email_authentication',
     ];
 
     protected $hidden = [
@@ -43,6 +64,26 @@ class User extends Authenticatable
             'updated_at'               => 'datetime',
             'deleted_at'               => 'datetime',
         ];
+    }
+
+    // ─── Filament ─────────────────────────────────────────────────────────────
+
+    /**
+     * Tutti i ruoli hanno accesso al panel Filament.
+     * La visibilità delle singole Resource è gestita dalle Policy.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return ! $this->trashed();
+    }
+
+    /**
+     * Nome mostrato nell'app Google Authenticator accanto al codice TOTP.
+     * Sovrascrive il default del trait (che usa solo $this->email).
+     */
+    public function getAppAuthenticationHolderName(): string
+    {
+        return "{$this->name} ({$this->email})";
     }
 
     // ─── Helpers ruolo ────────────────────────────────────────────────────────

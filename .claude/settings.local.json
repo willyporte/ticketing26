@@ -17,7 +17,12 @@
       "Bash(where php *)",
       "Bash(php84 --version)",
       "Bash(php8.4 --version)",
-      "Bash(\"/c/Users/willy/.config/herd/bin/php84/php.exe\" artisan *)"
+      "Bash(\"/c/Users/willy/.config/herd/bin/php84/php.exe\" artisan *)",
+      "Bash(php84 artisan *)",
+      "Read(//c/php84/**)",
+      "Read(//c/laragon/bin/php/**)",
+      "Read(//c/xampp/php/**)",
+      "Bash(\"/c/Users/willy/.config/herd/bin/php.bat\" artisan *)"
     ]
   }
 }

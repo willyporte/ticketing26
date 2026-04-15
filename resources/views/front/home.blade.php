@@ -1,78 +1,17 @@
-@extends('layouts.guest')
+@extends('layouts.front')
+
+@section('title', 'TicketFlow — Supporto B2B semplice e veloce')
+@section('description', 'TicketFlow è la piattaforma di ticketing B2B per team di supporto moderni. Tieni traccia di ogni richiesta, assegna i ticket e mantieni i clienti aggiornati.')
 
 @section('content')
-
-{{-- ═══════════════════════════════════════════════════════════════
-     NAVBAR
-═══════════════════════════════════════════════════════════════ --}}
-<header
-    x-data="{ open: false, scrolled: false }"
-    x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 20 })"
-    :class="scrolled ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur shadow-sm' : 'bg-transparent'"
-    class="fixed inset-x-0 top-0 z-50 transition-all duration-300"
-    role="banner"
->
-    <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Navigazione principale">
-        <div class="flex h-16 items-center justify-between">
-
-            {{-- Logo --}}
-            <a href="{{ route('home') }}" class="flex items-center gap-2" aria-label="Vai alla homepage">
-                <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                    </svg>
-                </span>
-                <span class="text-lg font-bold tracking-tight text-gray-900 dark:text-white">TicketFlow</span>
-            </a>
-
-            {{-- Desktop links --}}
-            <div class="hidden items-center gap-8 md:flex">
-                <a href="{{ route('home') }}" class="text-sm font-medium text-gray-700 transition hover:text-amber-500 dark:text-gray-300 dark:hover:text-amber-400">Home</a>
-                <a href="{{ route('come-funziona') }}" class="text-sm font-medium text-gray-700 transition hover:text-amber-500 dark:text-gray-300 dark:hover:text-amber-400">Come Funziona</a>
-                <a href="{{ route('contattaci') }}" class="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500">Contattaci</a>
-            </div>
-
-            {{-- Mobile burger --}}
-            <button
-                @click="open = !open"
-                class="inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 md:hidden"
-                :aria-expanded="open.toString()"
-                aria-label="Apri menu di navigazione"
-            >
-                <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-        </div>
-
-        {{-- Mobile menu --}}
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-2"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-2"
-            class="border-t border-gray-100 bg-white/95 pb-4 pt-2 dark:border-gray-800 dark:bg-gray-900/95 md:hidden"
-        >
-            <div class="flex flex-col gap-1 px-2">
-                <a href="{{ route('home') }}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800">Home</a>
-                <a href="{{ route('come-funziona') }}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800">Come Funziona</a>
-                <a href="{{ route('contattaci') }}" class="mt-1 rounded-lg bg-amber-500 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-amber-600">Contattaci</a>
-            </div>
-        </div>
-    </nav>
-</header>
-
-<main>
 
 {{-- ═══════════════════════════════════════════════════════════════
      HERO
 ═══════════════════════════════════════════════════════════════ --}}
 <section class="relative overflow-hidden bg-gray-50 pt-28 pb-20 dark:bg-gray-900 lg:pt-36 lg:pb-28" aria-label="Hero">
     {{-- Gradient blob --}}
-    <div class="pointer-events-none absolute -top-40 -right-40 h-[600px] w-[600px] rounded-full bg-amber-400/20 blur-3xl dark:bg-amber-500/10" aria-hidden="true"></div>
-    <div class="pointer-events-none absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full bg-amber-300/20 blur-3xl dark:bg-amber-600/10" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute -top-40 -right-40 h-150 w-150 rounded-full bg-amber-400/20 blur-3xl dark:bg-amber-500/10" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute -bottom-40 -left-40 h-125 w-125 rounded-full bg-amber-300/20 blur-3xl dark:bg-amber-600/10" aria-hidden="true"></div>
 
     <div class="relative mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
         <span class="mb-4 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">Supporto B2B</span>
@@ -385,7 +324,7 @@
             </p>
             <a
                 href="{{ route('contattaci') }}"
-                class="inline-block rounded-xl bg-amber-500 px-10 py-4 text-base font-bold text-white shadow-xl shadow-amber-500/30 transition hover:bg-amber-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
+                class="inline-block rounded-xl bg-amber-500 px-10 py-4 text-base font-bold text-white shadow-xl shadow-amber-500/30 transition hover:bg-amber-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
                 aria-label="Contattaci per una demo gratuita"
             >
                 Contattaci ora →
@@ -393,55 +332,5 @@
         </div>
     </div>
 </section>
-
-</main>
-
-{{-- ═══════════════════════════════════════════════════════════════
-     FOOTER
-═══════════════════════════════════════════════════════════════ --}}
-<footer class="border-t border-gray-200 bg-white py-12 dark:border-gray-800 dark:bg-gray-900" role="contentinfo">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-
-            {{-- Colonna 1: brand --}}
-            <div>
-                <div class="mb-3 flex items-center gap-2">
-                    <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500 text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                        </svg>
-                    </span>
-                    <span class="text-base font-bold text-gray-900 dark:text-white">TicketFlow</span>
-                </div>
-                <p class="text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-                    La piattaforma di ticketing B2B per team di supporto moderni. Semplice, veloce, affidabile.
-                </p>
-            </div>
-
-            {{-- Colonna 2: link utili --}}
-            <div>
-                <h3 class="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">Navigazione</h3>
-                <ul class="space-y-2">
-                    <li><a href="{{ route('come-funziona') }}" class="text-sm text-gray-600 transition hover:text-amber-500 dark:text-gray-400 dark:hover:text-amber-400">Come Funziona</a></li>
-                    <li><a href="{{ route('contattaci') }}" class="text-sm text-gray-600 transition hover:text-amber-500 dark:text-gray-400 dark:hover:text-amber-400">Contattaci</a></li>
-                </ul>
-            </div>
-
-            {{-- Colonna 3: legale --}}
-            <div>
-                <h3 class="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">Legale</h3>
-                <ul class="space-y-2">
-                    <li><a href="{{ route('privacy-policy') }}" class="text-sm text-gray-600 transition hover:text-amber-500 dark:text-gray-400 dark:hover:text-amber-400">Privacy Policy</a></li>
-                    <li><a href="{{ route('termini') }}" class="text-sm text-gray-600 transition hover:text-amber-500 dark:text-gray-400 dark:hover:text-amber-400">Termini e Condizioni</a></li>
-                </ul>
-            </div>
-
-        </div>
-
-        <div class="mt-10 border-t border-gray-100 pt-6 text-center dark:border-gray-800">
-            <p class="text-xs text-gray-400 dark:text-gray-600">&copy; {{ date('Y') }} TicketFlow. Tutti i diritti riservati.</p>
-        </div>
-    </div>
-</footer>
 
 @endsection

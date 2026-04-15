@@ -2,11 +2,13 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Dashboard;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use App\Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -26,8 +28,19 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->profile()
+            ->multiFactorAuthentication([
+                // TOTP via Google Authenticator (o altra app compatibile TOTP)
+                // recoverable() abilita i codici di recupero monouso
+                AppAuthentication::make()
+                    ->recoverable()
+                    ->brandName('TicketFlow'),
+
+                // 2FA via email: invia un codice OTP all'email dell'utente ad ogni login
+                EmailAuthentication::make(),
+            ])
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Indigo,
             ])
             ->sidebarCollapsibleOnDesktop()
             ->maxContentWidth('screen-2xl')
