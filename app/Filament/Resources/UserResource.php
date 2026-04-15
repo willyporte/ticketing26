@@ -9,10 +9,11 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -55,6 +56,15 @@ class UserResource extends Resource
 
             Section::make(__('users.sections.personal'))
                 ->schema([
+                    FileUpload::make('avatar_path')
+                        ->label(__('users.fields.avatar'))
+                        ->image()
+                        ->disk('public')
+                        ->directory('avatars')
+                        ->maxSize(2048) // 2 MB
+                        ->avatar()
+                        ->columnSpanFull(),
+
                     TextInput::make('name')
                         ->label(__('users.fields.name'))
                         ->required()

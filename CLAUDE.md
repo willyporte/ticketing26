@@ -572,11 +572,12 @@ expires_at          date
 | **STEP 8** | Plan + Subscription | Migration, Model, Relazioni, Seeder | ✅ Completato |
 | **STEP 9** | Policy (tutti i ruoli) | Policy files completi | ✅ Completato |
 | **STEP 10** | File lingua IT | `lang/it/*.php` per tutte le entità | ✅ Completato |
-| **STEP 11** | Filament Resources v5 | Resource + Dashboard per ogni ruolo | ⬅ PROSSIMO |
-| **STEP 12** | Time logic | Scalare minuti, blocco Client, warning minuti | ⏳ |
-| **STEP 13** | Workflow ticket | Transizioni stato, azioni Filament | ⏳ |
-| **STEP 14** | Notifiche | Classi Notification (DB attivo, email commentata) | ⏳ |
-| **STEP 15** | Export CSV | ExportAction + Exporter per ogni entità prevista | ⏳ |
+| **STEP 11** | Filament Resources v5 | Resource + Dashboard per ogni ruolo | ✅ Completato |
+| **STEP 12** | Time logic | Scalare minuti, blocco Client, warning minuti | ✅ Completato |
+| **STEP 13** | Workflow ticket | Transizioni stato, azioni Filament | ✅ Completato |
+| **STEP 14** | Notifiche | Classi Notification (DB attivo, email commentata) | ✅ Completato |
+| **STEP 15** | Export CSV | ExportAction + Exporter per ogni entità prevista | ✅ Completato |
+| **STEP 16** | Homepage pubblica | `resources/views/front/home.blade.php` — Navbar, Hero, Perché sceglierci, Come funziona, Statistiche animate, Testimonial, CTA, Footer | ✅ Completato |
 
 ### Regole roadmap
 - ✅ Un solo step per risposta

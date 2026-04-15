@@ -15,6 +15,7 @@ return [
         'created_at'                => 'Creato il',
         'updated_at'                => 'Aggiornato il',
         'password_hint_edit'        => 'Lascia vuoto per non modificare',
+        'avatar'                    => 'Foto profilo',
     ],
 
     'roles' => [
@@ -44,6 +45,11 @@ return [
         'create' => 'Nuovo utente',
         'edit'   => 'Modifica utente',
         'delete' => 'Elimina utente',
+        'export' => 'Esporta CSV',
+    ],
+
+    'export' => [
+        'completed' => 'Export utenti completato: :count righe esportate.',
     ],
 
     'messages' => [

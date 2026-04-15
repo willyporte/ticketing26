@@ -7,6 +7,7 @@ use App\Enums\TicketStatus;
 use App\Filament\Resources\TicketResource\Pages;
 use App\Models\Ticket;
 use App\Models\User;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -111,6 +112,29 @@ class TicketResource extends Resource
                         ->searchable()
                         ->preload()
                         ->nullable(),
+
+                    // Allegati — solo in creazione, in edit si gestiscono dalla pagina View
+                    FileUpload::make('attachment_paths')
+                        ->label(__('tickets.sections.attachments'))
+                        ->multiple()
+                        ->maxFiles(10)
+                        ->maxSize(10240) // 10 MB in KB
+                        ->acceptedFileTypes([
+                            'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+                            'application/pdf',
+                            'application/msword',
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                            'application/vnd.ms-excel',
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                            'text/plain',
+                            'application/zip',
+                        ])
+                        ->disk('local')
+                        ->directory('attachments/temp')
+                        ->visibility('private')
+                        ->storeFileNamesIn('attachment_names')
+                        ->columnSpanFull()
+                        ->hidden(fn (string $operation): bool => $operation !== 'create'),
                 ])
                 ->columns(2),
 

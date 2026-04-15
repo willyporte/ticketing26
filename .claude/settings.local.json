@@ -11,7 +11,13 @@
       "Bash(xargs grep:*)",
       "Bash(grep -rn 'generateFormMethodBody\\\\|return \\\\$schema' /c/laravel/ticketing/vendor/filament/)",
       "Bash(xargs -I{} basename {})",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npm run:*)",
+      "Bash(php artisan *)",
+      "Bash(where php *)",
+      "Bash(php84 --version)",
+      "Bash(php8.4 --version)",
+      "Bash(\"/c/Users/willy/.config/herd/bin/php84/php.exe\" artisan *)"
     ]
   }
 }

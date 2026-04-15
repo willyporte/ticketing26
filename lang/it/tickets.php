@@ -43,6 +43,11 @@ return [
         'resolve'        => 'Segna come risolto',
         'waiting_client' => 'In attesa cliente',
         'resume'         => 'Riprendi lavorazione',
+        'export'         => 'Esporta CSV',
+    ],
+
+    'export' => [
+        'completed' => 'Export ticket completato: :count righe esportate.',
     ],
 
     'attachments' => [

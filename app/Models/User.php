@@ -20,6 +20,7 @@ class User extends Authenticatable
         'role',
         'company_id',
         'can_view_company_tickets',
+        'avatar_path',
         'two_factor_secret',
         'two_factor_recovery_codes',
     ];

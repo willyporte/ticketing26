@@ -40,6 +40,11 @@ return [
         'create' => 'Nuova registrazione',
         'edit'   => 'Modifica registrazione',
         'delete' => 'Elimina registrazione',
+        'export' => 'Esporta CSV',
+    ],
+
+    'export' => [
+        'completed' => 'Export registrazioni completato: :count righe esportate.',
     ],
 
     'messages' => [

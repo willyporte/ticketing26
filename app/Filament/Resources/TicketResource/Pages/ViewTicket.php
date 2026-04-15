@@ -5,11 +5,13 @@ namespace App\Filament\Resources\TicketResource\Pages;
 use App\Enums\TicketPriority;
 use App\Enums\TicketStatus;
 use App\Filament\Resources\TicketResource;
+use App\Models\Ticket;
+use App\Models\TicketAttachment;
 use App\Models\TicketReply;
 use App\Models\User;
 use App\Notifications\TicketReplyAddedNotification;
 use Filament\Actions;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -18,10 +20,20 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
+use Illuminate\Support\Facades\Storage;
 
 class ViewTicket extends ViewRecord
 {
     protected static string $resource = TicketResource::class;
+
+    // ─── Form vuoto: sopprime la sezione "Visualizza Ticket" auto-generata da
+    //     Filament v5 (che rendererebbe la Resource form in sola lettura in
+    //     parallelo all'infolist custom). Il contenuto del ticket è gestito
+    //     interamente dall'infolist qui sotto.
+    public function form(Schema $schema): Schema
+    {
+        return $schema->schema([]);
+    }
 
     // ─── Mount ───────────────────────────────────────────────────────────────
 
@@ -47,6 +59,17 @@ class ViewTicket extends ViewRecord
 
     protected function getHeaderActions(): array
     {
+        $acceptedMimeTypes = [
+            'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'text/plain',
+            'application/zip',
+        ];
+
         return [
 
             // ── Risposta al ticket ────────────────────────────────────────────
@@ -60,17 +83,80 @@ class ViewTicket extends ViewRecord
                         ->label(__('tickets.replies.body'))
                         ->required()
                         ->rows(5),
+
+                    FileUpload::make('reply_attachments')
+                        ->label(__('tickets.attachments.add'))
+                        ->multiple()
+                        ->maxFiles(10)
+                        ->maxSize(10240) // 10 MB in KB
+                        ->acceptedFileTypes($acceptedMimeTypes)
+                        ->disk('local')
+                        ->directory('attachments/temp')
+                        ->visibility('private')
+                        ->storeFileNamesIn('reply_attachment_names'),
                 ])
                 ->action(function (array $data): void {
-                    TicketReply::create([
+                    $reply = TicketReply::create([
                         'ticket_id' => $this->record->id,
                         'user_id'   => auth()->id(),
                         'body'      => $data['body'],
                     ]);
 
+                    // ── Salvataggio allegati della risposta ───────────────────
+                    $paths    = is_array($data['reply_attachments'] ?? null) ? $data['reply_attachments'] : [];
+                    $names    = is_array($data['reply_attachment_names'] ?? null) ? $data['reply_attachment_names'] : [];
+                    $existing = TicketAttachment::countForTicket($this->record->id);
+
+                    if (! empty($paths)) {
+                        $directory = "attachments/{$this->record->company_id}/{$this->record->id}";
+                        Storage::disk('local')->makeDirectory($directory);
+
+                        foreach ($paths as $tempPath) {
+                            if ($existing >= 10) {
+                                break;
+                            }
+
+                            if (! Storage::disk('local')->exists($tempPath)) {
+                                continue;
+                            }
+
+                            $basename     = basename($tempPath);
+                            $originalName = $names[$tempPath] ?? $names[$basename] ?? $basename;
+                            $newPath      = $directory . '/' . $basename;
+
+                            Storage::disk('local')->move($tempPath, $newPath);
+
+                            TicketAttachment::create([
+                                'ticket_id'   => null,
+                                'reply_id'    => $reply->id,
+                                'uploaded_by' => auth()->id(),
+                                'filename'    => $originalName,
+                                'path'        => $newPath,
+                                'mime_type'   => Storage::disk('local')->mimeType($newPath),
+                                'size'        => Storage::disk('local')->size($newPath),
+                            ]);
+
+                            $existing++;
+                        }
+                    }
+
+                    // ── Auto-transizione stato ────────────────────────────────
+                    // Se il ticket era "in attesa del cliente" e chi risponde è
+                    // il cliente stesso, riportalo in_progress: segnala all'operatore
+                    // che c'è nuova attività da gestire.
+                    // Lo staff gestisce lo stato manualmente tramite le azioni header.
+                    if (
+                        $this->record->status === TicketStatus::WaitingClient &&
+                        auth()->user()->isClient()
+                    ) {
+                        $this->record->update(['status' => TicketStatus::InProgress]);
+                    }
+
                     $this->record->refresh();
 
-                    // Notifica DB a tutti i partecipanti (escluso chi ha scritto)
+                    // Notifica DB a tutti i partecipanti (escluso chi ha scritto).
+                    // L'operatore assegnato riceve sempre questa notifica, indipendentemente
+                    // dall'auto-transizione di stato — così sa che c'è una nuova risposta.
                     $this->notifyTicketParticipants(
                         new TicketReplyAddedNotification($this->record, auth()->user()),
                         excludeId: auth()->id(),
@@ -97,7 +183,7 @@ class ViewTicket extends ViewRecord
                     }
 
                     return [
-                        Select::make('assigned_to')
+                        \Filament\Forms\Components\Select::make('assigned_to')
                             ->label(__('tickets.fields.assigned_to'))
                             ->options(
                                 User::whereIn('role', ['operator', 'supervisor'])
@@ -130,26 +216,6 @@ class ViewTicket extends ViewRecord
                         ->send();
                 }),
 
-            // ── In attesa cliente (in_progress → waiting_client) ─────────────
-            Actions\Action::make('waitingClient')
-                ->label(__('tickets.actions.waiting_client'))
-                ->icon('heroicon-o-clock')
-                ->color('gray')
-                ->visible(fn (): bool =>
-                    auth()->user()->can('close', $this->record) &&
-                    $this->record->status === TicketStatus::InProgress
-                )
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    $this->record->update(['status' => TicketStatus::WaitingClient]);
-                    $this->record->refresh();
-
-                    Notification::make()
-                        ->title(__('tickets.messages.waiting_client'))
-                        ->success()
-                        ->send();
-                }),
-
             // ── Riprendi lavorazione (waiting_client → in_progress) ──────────
             Actions\Action::make('resume')
                 ->label(__('tickets.actions.resume'))
@@ -166,6 +232,27 @@ class ViewTicket extends ViewRecord
 
                     Notification::make()
                         ->title(__('tickets.messages.resumed'))
+                        ->success()
+                        ->send();
+                }),
+
+            // ── In attesa cliente (in_progress → waiting_client) ─────────────
+            // Raggruppato con gli altri cambi di stato (risolto/chiudi/riapri)
+            Actions\Action::make('waitingClient')
+                ->label(__('tickets.actions.waiting_client'))
+                ->icon('heroicon-o-clock')
+                ->color('gray')
+                ->visible(fn (): bool =>
+                    auth()->user()->can('close', $this->record) &&
+                    $this->record->status === TicketStatus::InProgress
+                )
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    $this->record->update(['status' => TicketStatus::WaitingClient]);
+                    $this->record->refresh();
+
+                    Notification::make()
+                        ->title(__('tickets.messages.waiting_client'))
                         ->success()
                         ->send();
                 }),
@@ -258,14 +345,21 @@ class ViewTicket extends ViewRecord
     }
 
     // ─── Infolist ─────────────────────────────────────────────────────────────
+    //
+    // Ordine sezioni: Dettagli → Conversazione → Allegati → Tempo lavorato
+    // Tutto in colonna singola — nessun ->columns() a nessun livello.
+    // Dettagli e Conversazione: aperte di default.
+    // Allegati e Tempo lavorato: collassate di default.
 
     public function infolist(Schema $schema): Schema
     {
         return $schema->schema([
 
-            // ── Dettagli ticket ──────────────────────────────────────────────
+            // ── 1. Dettagli ───────────────────────────────────────────────────
+
             Section::make(__('tickets.sections.details'))
                 ->schema([
+                    // Titolo e descrizione su tutta la larghezza
                     TextEntry::make('title')
                         ->label(__('tickets.fields.title'))
                         ->weight(FontWeight::Bold)
@@ -275,15 +369,18 @@ class ViewTicket extends ViewRecord
                         ->label(__('tickets.fields.description'))
                         ->columnSpanFull(),
 
+                    // Campi brevi su 2 colonne
                     TextEntry::make('status')
                         ->label(__('tickets.fields.status'))
                         ->badge()
+                        ->weight(FontWeight::Bold)
                         ->color(fn (TicketStatus $state): string => $state->color())
                         ->formatStateUsing(fn (TicketStatus $state): string => $state->label()),
 
                     TextEntry::make('priority')
                         ->label(__('tickets.fields.priority'))
                         ->badge()
+                        ->weight(FontWeight::Bold)
                         ->color(fn (TicketPriority $state): string => $state->color())
                         ->formatStateUsing(fn (TicketPriority $state): string => $state->label()),
 
@@ -313,17 +410,53 @@ class ViewTicket extends ViewRecord
                         ->dateTime('d/m/Y H:i')
                         ->timezone('Europe/Rome'),
                 ])
-                ->columns(2),
+                ->columns(2)
+                ->collapsible(),
 
-            // ── Conversazione / Risposte ─────────────────────────────────────
+            // ── 2. Conversazione ──────────────────────────────────────────────
             Section::make(__('tickets.sections.replies'))
                 ->schema([
                     RepeatableEntry::make('replies')
                         ->label('')
                         ->schema([
+                            // Avatar con iniziali + nome — 2 colonne per la riga header della risposta
                             TextEntry::make('user.name')
-                                ->label(__('users.fields.name'))
-                                ->weight(FontWeight::SemiBold),
+                                ->hiddenLabel()
+                                ->html()
+                                ->formatStateUsing(function (string $state, TicketReply $record): string {
+                                    $name = htmlspecialchars($state, ENT_QUOTES, 'UTF-8');
+                                    $user = $record->user;
+
+                                    // Foto profilo reale se presente, altrimenti circoletto con iniziali
+                                    if ($user?->avatar_path) {
+                                        $url        = Storage::disk('public')->url($user->avatar_path);
+                                        $safeUrl    = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+                                        $avatarHtml = "<img src='{$safeUrl}' alt='{$name}'
+                                                           style='width:2rem;height:2rem;border-radius:9999px;
+                                                                  object-fit:cover;flex-shrink:0;'>";
+                                    } else {
+                                        $words    = preg_split('/\s+/', trim($state));
+                                        $initials = strtoupper(
+                                            substr($words[0] ?? '', 0, 1) .
+                                            substr($words[1] ?? '', 0, 1)
+                                        );
+                                        $palette    = ['#6366f1','#8b5cf6','#ec4899','#ef4444',
+                                                       '#f97316','#22c55e','#14b8a6','#3b82f6','#06b6d4'];
+                                        $color      = $palette[abs(crc32($state)) % count($palette)];
+                                        $avatarHtml = "<span style='background:{$color};
+                                                                     min-width:2rem;width:2rem;height:2rem;
+                                                                     border-radius:9999px;flex-shrink:0;
+                                                                     display:flex;align-items:center;
+                                                                     justify-content:center;
+                                                                     color:#fff;font-size:0.7rem;font-weight:700;
+                                                                    '>{$initials}</span>";
+                                    }
+
+                                    return "<div style='display:flex;align-items:center;gap:0.6rem;'>
+                                                {$avatarHtml}
+                                                <span style='font-weight:600;'>{$name}</span>
+                                            </div>";
+                                }),
 
                             TextEntry::make('created_at')
                                 ->label(__('tickets.fields.created_at'))
@@ -335,16 +468,28 @@ class ViewTicket extends ViewRecord
                                 ->columnSpanFull(),
                         ])
                         ->columns(2),
-                ]),
+                ])
+                ->collapsible(),
 
-            // ── Allegati ─────────────────────────────────────────────────────
+            // ── 3. Allegati ───────────────────────────────────────────────────
+            // Aggrega allegati diretti (ticket_id) e allegati delle risposte
+            // (reply_id) in un'unica lista ordinata per data.
             Section::make(__('tickets.sections.attachments'))
                 ->schema([
-                    RepeatableEntry::make('attachments')
+                    RepeatableEntry::make('all_attachments')
                         ->label('')
+                        ->state(fn (Ticket $record): \Illuminate\Support\Collection =>
+                            TicketAttachment::where('ticket_id', $record->id)
+                                ->orWhereIn('reply_id', $record->replies()->pluck('id'))
+                                ->with('uploader')
+                                ->orderBy('created_at')
+                                ->get()
+                        )
                         ->schema([
                             TextEntry::make('filename')
-                                ->label(__('tickets.attachments.filename')),
+                                ->label(__('tickets.attachments.filename'))
+                                ->url(fn (TicketAttachment $record): string => route('attachments.download', $record))
+                                ->openUrlInNewTab(),
 
                             TextEntry::make('size')
                                 ->label(__('tickets.attachments.size'))
@@ -361,11 +506,12 @@ class ViewTicket extends ViewRecord
                                 ->label(__('tickets.attachments.uploaded_at'))
                                 ->dateTime('d/m/Y H:i')
                                 ->timezone('Europe/Rome'),
-                        ])
-                        ->columns(2),
-                ]),
+                        ]),
+                ])
+                ->collapsible()
+                ->collapsed(),
 
-            // ── Tempo lavorato (solo staff) ───────────────────────────────────
+            // ── 4. Tempo lavorato (solo staff) ───────────────────────────────
             Section::make(__('tickets.sections.time'))
                 ->schema([
                     RepeatableEntry::make('timeEntries')
@@ -395,10 +541,11 @@ class ViewTicket extends ViewRecord
                                 ->label(__('time_entries.fields.created_at'))
                                 ->dateTime('d/m/Y H:i')
                                 ->timezone('Europe/Rome'),
-                        ])
-                        ->columns(2),
+                        ]),
                 ])
+                ->collapsible()
+                ->collapsed()
                 ->hidden(fn (): bool => auth()->user()->isClient()),
-        ]);
+        ])->columns(1);
     }
 }

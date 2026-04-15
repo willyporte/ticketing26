@@ -52,6 +52,11 @@ return [
         'create' => 'Nuovo abbonamento',
         'edit'   => 'Modifica abbonamento',
         'delete' => 'Elimina abbonamento',
+        'export' => 'Esporta CSV',
+    ],
+
+    'export' => [
+        'completed' => 'Export abbonamenti completato: :count righe esportate.',
     ],
 
     'messages' => [

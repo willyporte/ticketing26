@@ -37,6 +37,11 @@ return [
         'create' => 'Nuova azienda',
         'edit'   => 'Modifica azienda',
         'delete' => 'Elimina azienda',
+        'export' => 'Esporta CSV',
+    ],
+
+    'export' => [
+        'completed' => 'Export aziende completato: :count righe esportate.',
     ],
 
     'messages' => [
