@@ -6,6 +6,9 @@
     <meta name="description" content="@yield('description', 'TicketFlow — La piattaforma di ticketing B2B per team di supporto moderni.')">
     <title>@yield('title', 'TicketFlow')</title>
 
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="alternate icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- Alpine.js Intersect plugin --}}

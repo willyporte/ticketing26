@@ -44,6 +44,7 @@ class AdminPanelProvider extends PanelProvider
                 // 2FA via email: invia un codice OTP all'email dell'utente ad ogni login
                 EmailAuthentication::make(),
             ])
+            ->favicon(asset('favicon.svg'))
             ->colors([
                 'primary' => Color::Amber,
             ])
