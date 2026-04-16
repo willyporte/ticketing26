@@ -54,7 +54,8 @@ class TicketResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $query = parent::getEloquentQuery();
+        // eager load attachments per evitare N+1 nella colonna allegati
+        $query = parent::getEloquentQuery()->with('attachments');
         $user = auth()->user();
 
         if ($user?->isClient()) {
@@ -269,6 +270,25 @@ class TicketResource extends Resource
                     ->dateTime('d/m/Y H:i')
                     ->timezone('Europe/Rome')
                     ->sortable(),
+
+                TextColumn::make('attachments_links')
+                    ->label(__('tickets.sections.attachments'))
+                    ->getStateUsing(function (Ticket $record): string {
+                        $items = $record->attachments;
+                        if ($items->isEmpty()) {
+                            return '';
+                        }
+                        return $items->map(function ($a): string {
+                            $url  = route('attachments.download', $a);
+                            $name = e($a->filename);
+                            return "<a href=\"{$url}\" "
+                                 . "class=\"text-primary-600 dark:text-primary-400 hover:underline text-xs block\" "
+                                 . "onclick=\"event.stopPropagation()\" "
+                                 . "target=\"_blank\">{$name}</a>";
+                        })->implode('');
+                    })
+                    ->html()
+                    ->wrap(),
             ])
             ->filters($filters)
             ->defaultSort('created_at', 'desc')

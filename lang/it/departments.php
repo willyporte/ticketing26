@@ -12,7 +12,7 @@ return [
 
     'navigation' => [
         'group' => 'Amministrazione',
-        'sort'  => 3,
+        'sort'  => 5,
     ],
 
     'actions' => [

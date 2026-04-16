@@ -16,7 +16,7 @@ return [
 
     'navigation' => [
         'group' => 'Amministrazione',
-        'sort'  => 2,
+        'sort'  => 4,
     ],
 
     'sections' => [

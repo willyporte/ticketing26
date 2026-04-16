@@ -44,6 +44,9 @@ class ViewTicket extends ViewRecord
     {
         parent::mount($record);
 
+        // Eager load allegati diretti al ticket e allegati delle risposte
+        $this->record->load(['attachments', 'replies.attachments']);
+
         // Warning per lo staff: minuti esauriti sull'azienda del ticket
         if (! auth()->user()?->isClient()) {
             $subscription = $this->record->company?->activeSubscription();
@@ -406,6 +409,46 @@ class ViewTicket extends ViewRecord
             ->each(fn (User $u) => $u->notify($notification));
     }
 
+    // ─── Helper allegati ─────────────────────────────────────────────────────
+
+    /**
+     * Genera HTML con un link per riga: icona graffetta a sinistra + nome file + dimensione.
+     * Usato sia per gli allegati diretti al ticket che per quelli delle risposte.
+     */
+    private static function attachmentLinksHtml(
+        \Illuminate\Support\Collection $attachments,
+        string $containerStyle = '',
+    ): string {
+        // Filament sanitizza l'HTML e rimuove tag <svg> inline.
+        // Soluzione: SVG codificato come data URI in un <img> — mai rimosso dal purifier.
+        $svg  = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" '
+              . 'stroke-width="1.5" stroke="#6366f1">'
+              . '<path stroke-linecap="round" stroke-linejoin="round" '
+              . 'd="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94'
+              . 'A3 3 0 1119.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81'
+              . 'a1.5 1.5 0 002.112 2.13"/>'
+              . '</svg>';
+        $icon = '<img src="data:image/svg+xml;base64,' . \base64_encode($svg) . '" '
+              . 'style="width:1rem;height:1rem;flex-shrink:0;" alt="" />';
+
+        $rows = $attachments->map(function (TicketAttachment $a) use ($icon): string {
+            $url  = route('attachments.download', $a);
+            $name = htmlspecialchars($a->filename, ENT_QUOTES, 'UTF-8');
+            $size = $a->formattedSize();
+
+            return "<a href=\"{$url}\" target=\"_blank\" "
+                 . "style=\"display:flex;align-items:center;gap:0.45rem;"
+                 . "color:#6366f1;font-size:0.8rem;text-decoration:none;"
+                 . "padding:0.2rem 0;\">"
+                 . "<span style='color:#6366f1;flex-shrink:0;'>{$icon}</span>"
+                 . "<span style='text-decoration:underline;'>{$name}</span>"
+                 . "<span style='color:#9ca3af;font-size:0.75rem;margin-left:0.15rem;'>({$size})</span>"
+                 . "</a>";
+        })->implode('');
+
+        return "<div style='display:flex;flex-direction:column;gap:0.1rem;{$containerStyle}'>{$rows}</div>";
+    }
+
     // ─── Infolist ─────────────────────────────────────────────────────────────
     //
     // Ordine sezioni: Dettagli → Conversazione → Allegati → Tempo lavorato
@@ -430,6 +473,16 @@ class ViewTicket extends ViewRecord
                     TextEntry::make('description')
                         ->label(__('tickets.fields.description'))
                         ->columnSpanFull(),
+
+                    // Allegati diretti al ticket (caricati con l'apertura del ticket)
+                    TextEntry::make('ticket_attachments_links')
+                        ->hiddenLabel()
+                        ->html()
+                        ->columnSpanFull()
+                        ->hidden(fn (Ticket $record): bool => $record->attachments->isEmpty())
+                        ->getStateUsing(fn (Ticket $record): string =>
+                            static::attachmentLinksHtml($record->attachments, 'padding:0.25rem 0;')
+                        ),
 
                     // Campi brevi su 2 colonne
                     TextEntry::make('status')
@@ -550,6 +603,19 @@ class ViewTicket extends ViewRecord
                             TextEntry::make('body')
                                 ->label(__('tickets.replies.body'))
                                 ->columnSpanFull(),
+
+                            // Link allegati della risposta — visibile solo se presenti
+                            TextEntry::make('reply_attachments_links')
+                                ->hiddenLabel()
+                                ->html()
+                                ->columnSpanFull()
+                                ->hidden(fn (TicketReply $record): bool => $record->attachments->isEmpty())
+                                ->getStateUsing(fn (TicketReply $record): string =>
+                                    static::attachmentLinksHtml(
+                                        $record->attachments,
+                                        'margin-top:0.5rem;padding-top:0.5rem;border-top:1px dashed rgba(0,0,0,0.1);'
+                                    )
+                                ),
                         ])
                         ->columns(2),
                 ])

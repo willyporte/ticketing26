@@ -29,7 +29,7 @@ return [
     // ── Subscription ──────────────────────────────────────────────────────────
     'navigation' => [
         'group' => 'Amministrazione',
-        'sort'  => 5,
+        'sort'  => 3,
     ],
 
     'label'        => 'Abbonamento',

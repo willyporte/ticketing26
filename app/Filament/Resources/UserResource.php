@@ -18,6 +18,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -30,6 +31,25 @@ class UserResource extends Resource
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-users';
 
     protected static ?int $navigationSort = 2;
+
+    // ─── Avatar helper ───────────────────────────────────────────────────────
+
+    public static function makeInitialsAvatar(string $name): string
+    {
+        $initials = collect(explode(' ', trim($name)))
+            ->map(fn (string $part): string => strtoupper(mb_substr($part, 0, 1)))
+            ->take(2)
+            ->implode('');
+
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">'
+            . '<rect width="36" height="36" rx="18" fill="#f59e0b"/>'
+            . '<text x="50%" y="50%" dy=".35em" text-anchor="middle" fill="#fff" '
+            . 'font-family="ui-sans-serif,system-ui,sans-serif" font-size="13" font-weight="700">'
+            . htmlspecialchars($initials, ENT_XML1)
+            . '</text></svg>';
+
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
+    }
 
     // ─── Labels e navigazione ────────────────────────────────────────────────
 
@@ -62,7 +82,7 @@ class UserResource extends Resource
                         ->disk('public')
                         ->directory('avatars')
                         ->maxSize(2048) // 2 MB
-                        ->avatar()
+                        ->imagePreviewHeight('80')
                         ->columnSpanFull(),
 
                     TextInput::make('name')
@@ -136,6 +156,13 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('avatar_path')
+                    ->label('')
+                    ->disk('public')
+                    ->circular()
+                    ->size(36)
+                    ->defaultImageUrl(fn (User $record): string => self::makeInitialsAvatar($record->name)),
+
                 TextColumn::make('name')
                     ->label(__('users.fields.name'))
                     ->searchable()

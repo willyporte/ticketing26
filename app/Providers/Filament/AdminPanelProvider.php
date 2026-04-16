@@ -15,6 +15,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -44,12 +45,16 @@ class AdminPanelProvider extends PanelProvider
                 EmailAuthentication::make(),
             ])
             ->colors([
-                'primary' => Color::Indigo,
+                'primary' => Color::Amber,
             ])
             ->sidebarWidth('12rem')// Usa rem, px, ecc.
             ->sidebarCollapsibleOnDesktop()
             ->maxContentWidth('screen-2xl')
             ->databaseNotifications()
+            ->navigationGroups([
+                'Supporto',
+                'Amministrazione',
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
@@ -72,9 +77,19 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn(): HtmlString => new HtmlString(
+                    Blade::render("@include('filament.pages.auth.login-demo-modal')")
+                ),
+                scopes: Login::class,
+            )
+            ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): HtmlString => new HtmlString(<<<'HTML'
+                fn(): HtmlString => new HtmlString(<<<'HTML'
                 <style>
+                    /* Nasconde elementi x-cloak prima che Alpine si inizializzi */
+                    [x-cloak] { display: none !important; }
+
                     /* Stat widget backgrounds — light mode */
                     .stat-open        { background-color: #fecaca !important; }
                     .stat-in-progress { background-color: #fde68a !important; }
