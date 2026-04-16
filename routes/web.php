@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContactController;
 use App\Models\TicketAttachment;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -8,6 +9,7 @@ Route::get('/', fn () => view('front.home'))->name('home');
 
 Route::get('/come-funziona', fn () => view('front.come-funziona'))->name('come-funziona');
 Route::get('/contattaci', fn () => view('front.contattaci'))->name('contattaci');
+Route::post('/contattaci', [ContactController::class, 'send'])->name('contattaci.send');
 Route::get('/privacy-policy', fn () => view('front.privacy-policy'))->name('privacy-policy');
 Route::get('/termini', fn () => view('front.termini'))->name('termini');
 

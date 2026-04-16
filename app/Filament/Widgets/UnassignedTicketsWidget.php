@@ -9,6 +9,7 @@ use App\Models\Ticket;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Support\HtmlString;
 
 class UnassignedTicketsWidget extends BaseWidget
 {
@@ -26,12 +27,16 @@ class UnassignedTicketsWidget extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading(__('dashboard.widgets.unassigned_tickets'))
-            ->query(
-                Ticket::with(['company', 'department'])
-                    ->whereNull('assigned_to')
-                    ->whereNotIn('status', [TicketStatus::Resolved, TicketStatus::Closed])
-                    ->latest()
+            ->heading(new HtmlString(
+                '<span style="display:inline-flex;align-items:center;gap:7px;">'
+                . '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:18px;height:18px;color:#f59e0b;flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>'
+                . __('dashboard.widgets.unassigned_tickets')
+                . '</span>'
+            ))
+            ->query(fn () => Ticket::with(['company', 'department'])
+                ->whereNull('assigned_to')
+                ->whereNotIn('status', [TicketStatus::Resolved, TicketStatus::Closed])
+                ->latest()
             )
             ->columns([
                 TextColumn::make('title')

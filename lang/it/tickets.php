@@ -5,16 +5,17 @@ return [
     'plural_label' => 'Ticket',
 
     'fields' => [
-        'title'         => 'Titolo',
-        'description'   => 'Descrizione',
-        'status'        => 'Stato',
-        'priority'      => 'Priorità',
-        'company'       => 'Azienda',
-        'department'    => 'Reparto',
-        'created_by'    => 'Creato da',
-        'assigned_to'   => 'Assegnato a',
-        'created_at'    => 'Creato il',
-        'updated_at'    => 'Aggiornato il',
+        'title'              => 'Titolo',
+        'description'        => 'Descrizione',
+        'status'             => 'Stato',
+        'priority'           => 'Priorità',
+        'company'            => 'Azienda',
+        'department'         => 'Reparto',
+        'created_by'         => 'Creato da',
+        'assigned_to'        => 'Assegnato a',
+        'created_at'         => 'Creato il',
+        'updated_at'         => 'Aggiornato il',
+        'minutes_remaining'  => 'Minuti residui',
     ],
 
     'status' => [
@@ -44,6 +45,20 @@ return [
         'waiting_client' => 'In attesa cliente',
         'resume'         => 'Riprendi lavorazione',
         'export'         => 'Esporta CSV',
+        'client_info'    => 'Info cliente',
+    ],
+
+    'modal' => [
+        'client'            => 'Cliente',
+        'company'           => 'Azienda',
+        'assignee'          => 'Operatore assegnato',
+        'subscription'      => 'Abbonamento',
+        'minutes_remaining' => 'minuti residui',
+        'remaining'         => 'residuo',
+        'no_subscription'   => 'Nessun abbonamento attivo',
+        'negative_balance'  => 'saldo negativo',
+        'low_balance'       => 'quasi esaurito',
+        'close'             => 'Chiudi',
     ],
 
     'export' => [

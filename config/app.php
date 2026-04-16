@@ -15,6 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'Ticketing'),
 
+    // Email del proprietario del sito — destinatario dei form di contatto
+    'sys_email' => env('SYS_EMAIL', 'gportesi@gmail.com'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

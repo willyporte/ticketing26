@@ -13,6 +13,11 @@ return [
         'updated_at'    => 'Aggiornato il',
     ],
 
+    'hints' => [
+        'available'       => 'Minuti disponibili: :minutes',
+        'no_subscription' => 'Nessun abbonamento attivo',
+    ],
+
     'navigation' => [
         'group' => 'Supporto',
         'sort'  => 2,

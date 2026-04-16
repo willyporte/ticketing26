@@ -42,6 +42,12 @@
             <div class="hidden items-center gap-8 md:flex">
                 <a href="{{ route('home') }}" class="text-sm font-medium text-gray-700 transition hover:text-amber-500 dark:text-gray-300 dark:hover:text-amber-400 {{ request()->routeIs('home') ? 'text-amber-500 dark:text-amber-400' : '' }}">Home</a>
                 <a href="{{ route('come-funziona') }}" class="text-sm font-medium text-gray-700 transition hover:text-amber-500 dark:text-gray-300 dark:hover:text-amber-400 {{ request()->routeIs('come-funziona') ? 'text-amber-500 dark:text-amber-400' : '' }}">Come Funziona</a>
+                <a href="{{ url('/admin') }}" class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 transition hover:text-amber-500 dark:text-gray-300 dark:hover:text-amber-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    Area Riservata
+                </a>
                 <a href="{{ route('contattaci') }}" class="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500">Contattaci</a>
             </div>
 
@@ -71,6 +77,12 @@
             <div class="flex flex-col gap-1 px-2">
                 <a href="{{ route('home') }}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 {{ request()->routeIs('home') ? 'bg-gray-100 dark:bg-gray-800' : '' }}">Home</a>
                 <a href="{{ route('come-funziona') }}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 {{ request()->routeIs('come-funziona') ? 'bg-gray-100 dark:bg-gray-800' : '' }}">Come Funziona</a>
+                <a href="{{ url('/admin') }}" class="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    Area Riservata
+                </a>
                 <a href="{{ route('contattaci') }}" class="mt-1 rounded-lg bg-amber-500 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-amber-600">Contattaci</a>
             </div>
         </div>

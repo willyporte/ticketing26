@@ -27,15 +27,18 @@ class OperatorStatsWidget extends BaseWidget
         return [
             Stat::make(__('tickets.dashboard.open'), Ticket::where('assigned_to', $userId)->where('status', TicketStatus::Open)->count())
                 ->icon('heroicon-o-folder-open')
-                ->color('info'),
+                ->color('info')
+                ->extraAttributes(['class' => 'stat-open']),
 
             Stat::make(__('tickets.dashboard.in_progress'), Ticket::where('assigned_to', $userId)->where('status', TicketStatus::InProgress)->count())
                 ->icon('heroicon-o-arrow-path')
-                ->color('warning'),
+                ->color('warning')
+                ->extraAttributes(['class' => 'stat-in-progress']),
 
             Stat::make(__('tickets.dashboard.waiting_client'), Ticket::where('assigned_to', $userId)->where('status', TicketStatus::WaitingClient)->count())
                 ->icon('heroicon-o-clock')
-                ->color('gray'),
+                ->color('gray')
+                ->extraAttributes(['class' => 'stat-waiting']),
         ];
     }
 }

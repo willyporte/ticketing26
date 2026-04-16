@@ -11,11 +11,13 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
+use Illuminate\Contracts\View\View as ViewContract;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -53,7 +55,7 @@ class TicketResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
-        $user  = auth()->user();
+        $user = auth()->user();
 
         if ($user?->isClient()) {
             if ($user->can_view_company_tickets) {
@@ -91,7 +93,7 @@ class TicketResource extends Resource
                         ->label(__('tickets.fields.priority'))
                         ->options(
                             collect(TicketPriority::cases())
-                                ->mapWithKeys(fn ($p) => [$p->value => $p->label()])
+                                ->mapWithKeys(fn($p) => [$p->value => $p->label()])
                                 ->toArray()
                         )
                         ->default(TicketPriority::Medium->value)
@@ -104,7 +106,7 @@ class TicketResource extends Resource
                         ->searchable()
                         ->preload()
                         ->required()
-                        ->hidden(fn (): bool => auth()->user()->isClient()),
+                        ->hidden(fn(): bool => auth()->user()->isClient()),
 
                     Select::make('department_id')
                         ->label(__('tickets.fields.department'))
@@ -120,7 +122,10 @@ class TicketResource extends Resource
                         ->maxFiles(10)
                         ->maxSize(10240) // 10 MB in KB
                         ->acceptedFileTypes([
-                            'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
                             'application/pdf',
                             'application/msword',
                             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -134,7 +139,7 @@ class TicketResource extends Resource
                         ->visibility('private')
                         ->storeFileNamesIn('attachment_names')
                         ->columnSpanFull()
-                        ->hidden(fn (string $operation): bool => $operation !== 'create'),
+                        ->hidden(fn(string $operation): bool => $operation !== 'create'),
                 ])
                 ->columns(2),
 
@@ -145,12 +150,12 @@ class TicketResource extends Resource
                         ->label(__('tickets.fields.status'))
                         ->options(
                             collect(TicketStatus::cases())
-                                ->mapWithKeys(fn ($s) => [$s->value => $s->label()])
+                                ->mapWithKeys(fn($s) => [$s->value => $s->label()])
                                 ->toArray()
                         )
                         ->required()
                         // In creazione lo status è sempre 'open' — impostato server-side
-                        ->hidden(fn (string $operation): bool => $operation === 'create'),
+                        ->hidden(fn(string $operation): bool => $operation === 'create'),
 
                     Select::make('assigned_to')
                         ->label(__('tickets.fields.assigned_to'))
@@ -170,7 +175,7 @@ class TicketResource extends Resource
                         ->searchable()
                         ->preload(),
                 ])
-                ->hidden(fn (): bool => auth()->user()->isClient())
+                ->hidden(fn(): bool => auth()->user()->isClient())
                 ->columns(2),
         ]);
     }
@@ -185,7 +190,7 @@ class TicketResource extends Resource
                 ->label(__('tickets.filters.status'))
                 ->options(
                     collect(TicketStatus::cases())
-                        ->mapWithKeys(fn ($s) => [$s->value => $s->label()])
+                        ->mapWithKeys(fn($s) => [$s->value => $s->label()])
                         ->toArray()
                 ),
 
@@ -193,7 +198,7 @@ class TicketResource extends Resource
                 ->label(__('tickets.filters.priority'))
                 ->options(
                     collect(TicketPriority::cases())
-                        ->mapWithKeys(fn ($p) => [$p->value => $p->label()])
+                        ->mapWithKeys(fn($p) => [$p->value => $p->label()])
                         ->toArray()
                 ),
 
@@ -203,7 +208,7 @@ class TicketResource extends Resource
         ];
 
         // Filtri aggiuntivi per lo staff (admin, supervisor, operator)
-        if (! auth()->user()->isClient()) {
+        if (!auth()->user()->isClient()) {
             $filters[] = SelectFilter::make('assigned_to')
                 ->label(__('tickets.filters.assigned_to'))
                 ->options(
@@ -229,27 +234,35 @@ class TicketResource extends Resource
                     ->searchable()
                     ->limit(50),
 
+                TextColumn::make('creator.name')
+                    ->label(__('tickets.fields.created_by'))
+                    ->sortable()
+                    ->searchable()
+                    ->hidden(fn(): bool => auth()->user()->isClient()),
+
                 TextColumn::make('status')
                     ->label(__('tickets.fields.status'))
                     ->badge()
-                    ->color(fn (TicketStatus $state): string => $state->color())
-                    ->formatStateUsing(fn (TicketStatus $state): string => $state->label()),
+                    ->searchable()
+                    ->color(fn(TicketStatus $state): string => $state->color())
+                    ->formatStateUsing(fn(TicketStatus $state): string => $state->label()),
 
                 TextColumn::make('priority')
                     ->label(__('tickets.fields.priority'))
                     ->badge()
-                    ->color(fn (TicketPriority $state): string => $state->color())
-                    ->formatStateUsing(fn (TicketPriority $state): string => $state->label()),
+                    ->color(fn(TicketPriority $state): string => $state->color())
+                    ->formatStateUsing(fn(TicketPriority $state): string => $state->label()),
 
                 TextColumn::make('company.name')
                     ->label(__('tickets.fields.company'))
                     ->sortable()
-                    ->hidden(fn (): bool => auth()->user()->isClient()),
+                    ->searchable()
+                    ->hidden(fn(): bool => auth()->user()->isClient()),
 
                 TextColumn::make('assignee.name')
                     ->label(__('tickets.fields.assigned_to'))
                     ->default('-')
-                    ->hidden(fn (): bool => auth()->user()->isClient()),
+                    ->hidden(fn(): bool => auth()->user()->isClient()),
 
                 TextColumn::make('created_at')
                     ->label(__('tickets.fields.created_at'))
@@ -259,17 +272,33 @@ class TicketResource extends Resource
             ])
             ->filters($filters)
             ->defaultSort('created_at', 'desc')
-            ->recordUrl(fn (Ticket $record): string => static::getUrl('view', ['record' => $record]))
+            ->recordUrl(fn(Ticket $record): string => static::getUrl('view', ['record' => $record]))
             ->actions([
+                Action::make('clientInfo')
+                    ->label('')
+                    ->tooltip(__('tickets.actions.client_info'))
+                    ->icon('heroicon-o-information-circle')
+                    ->color('success')
+                    ->visible(fn(): bool => !auth()->user()->isClient())
+                    ->modalHeading(__('tickets.actions.client_info'))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel(__('tickets.modal.close'))
+                    ->modalContent(
+                        fn(Ticket $record): ViewContract =>
+                        view('filament.modals.ticket-client-info', [
+                            'ticket' => $record->loadMissing(['creator', 'assignee', 'company.subscriptions.plan']),
+                            'subscription' => $record->company?->activeSubscription()?->loadMissing('plan'),
+                        ])
+                    ),
                 EditAction::make()
-                    ->visible(fn (Ticket $record): bool => auth()->user()->can('update', $record)),
+                    ->visible(fn(Ticket $record): bool => auth()->user()->can('update', $record)),
                 DeleteAction::make()
-                    ->visible(fn (Ticket $record): bool => auth()->user()->can('delete', $record)),
+                    ->visible(fn(Ticket $record): bool => auth()->user()->can('delete', $record)),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->visible(fn (): bool => auth()->user()->isAdministrator()),
+                        ->visible(fn(): bool => auth()->user()->isAdministrator()),
                 ]),
             ]);
     }
@@ -279,10 +308,10 @@ class TicketResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListTickets::route('/'),
+            'index' => Pages\ListTickets::route('/'),
             'create' => Pages\CreateTicket::route('/create'),
-            'view'   => Pages\ViewTicket::route('/{record}'),
-            'edit'   => Pages\EditTicket::route('/{record}/edit'),
+            'view' => Pages\ViewTicket::route('/{record}'),
+            'edit' => Pages\EditTicket::route('/{record}/edit'),
         ];
     }
 }

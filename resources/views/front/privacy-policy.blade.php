@@ -30,63 +30,87 @@
                 <div>
                     <h2 class="text-xl font-semibold text-gray-900 mb-2">2. Natura del sito</h2>
                     <p>
-                        TicketFlow è una <strong>piattaforma dimostrativa</strong> di gestione ticket B2B, realizzata a scopo di test e presentazione del software. <strong>Non è un servizio operativo</strong> aperto al pubblico.
+                        TicketFlow è una <strong>piattaforma di gestione ticket B2B</strong> in fase di presentazione commerciale. Il sito pubblico consente ai potenziali clienti di richiedere informazioni e una demo tramite il modulo di contatto.
                     </p>
-                    <p class="mt-3 font-medium text-amber-700">
-                        ⚠️ Tutti i dati presenti nella piattaforma (utenti, aziende, ticket, messaggi) sono <strong>fittizi e generati automaticamente</strong> a scopo dimostrativo. Non vi è alcuna raccolta di dati personali reali da parte dei visitatori.
+                    <p class="mt-3 text-sm text-gray-500">
+                        Nota: i dati presenti nell'area riservata (utenti, aziende, ticket) sono generati a scopo dimostrativo e non appartengono a persone fisiche reali.
                     </p>
                 </div>
 
                 <div>
                     <h2 class="text-xl font-semibold text-gray-900 mb-2">3. Accesso alla piattaforma</h2>
                     <p>
-                        La piattaforma <strong>non prevede registrazione pubblica</strong>. L'accesso è riservato agli utenti creati direttamente dall'amministratore del sistema, con credenziali dimostrative predefinite.
+                        La piattaforma <strong>non prevede registrazione pubblica</strong>. L'accesso all'area riservata è riservato agli utenti creati dall'amministratore del sistema.
                     </p>
                     <p class="mt-3">
-                        I visitatori del sito pubblico (questa pagina, "Come Funziona", "Contattaci") non sono tenuti a fornire alcun dato personale per navigare.
+                        I visitatori del sito pubblico possono navigare liberamente senza fornire alcun dato personale. Il modulo di contatto è <strong>facoltativo</strong>: i dati vengono forniti solo su iniziativa volontaria dell'utente che desidera ricevere informazioni o richiedere una demo.
                     </p>
                 </div>
 
                 <div>
                     <h2 class="text-xl font-semibold text-gray-900 mb-2">4. Tipologia di dati trattati</h2>
-                    <p>Il sito tratta esclusivamente:</p>
-                    <ul class="list-disc pl-6 mt-2 space-y-1">
-                        <li><strong>Dati tecnici di navigazione</strong> – indirizzo IP, tipo di browser, pagine visitate, timestamp delle richieste HTTP (log del server web).</li>
-                        <li><strong>Dati dimostrativi precaricati</strong> – utenti fittizi, aziende di fantasia, ticket di esempio generati automaticamente dal sistema. Questi dati non appartengono a persone fisiche reali.</li>
+                    <p>Il sito tratta le seguenti categorie di dati:</p>
+                    <ul class="list-disc pl-6 mt-2 space-y-2">
+                        <li>
+                            <strong>Dati tecnici di navigazione</strong> – indirizzo IP, tipo di browser, pagine visitate, timestamp delle richieste HTTP (log del server web).
+                        </li>
+                        <li>
+                            <strong>Dati forniti volontariamente tramite il modulo di contatto</strong>:
+                            <ul class="list-disc pl-6 mt-1 space-y-1 text-sm">
+                                <li>Nome e cognome</li>
+                                <li>Indirizzo email aziendale</li>
+                                <li>Nome dell'azienda (facoltativo)</li>
+                                <li>Numero di telefono (facoltativo)</li>
+                                <li>Testo libero del messaggio</li>
+                            </ul>
+                        </li>
                     </ul>
                     <p class="mt-3 text-sm text-gray-500">
-                        <strong>Nota:</strong> Il sito non raccoglie né conserva dati particolari (ex art. 9 GDPR) o dati giudiziari (ex art. 10 GDPR).
+                        Il sito non raccoglie dati particolari (ex art. 9 GDPR) né dati giudiziari (ex art. 10 GDPR).
                     </p>
                 </div>
 
                 <div>
                     <h2 class="text-xl font-semibold text-gray-900 mb-2">5. Finalità del trattamento</h2>
-                    <p>I dati tecnici di navigazione sono trattati esclusivamente per:</p>
+                    <p><strong>Dati tecnici di navigazione</strong> — trattati per:</p>
                     <ul class="list-disc pl-6 mt-2 space-y-1">
                         <li>garantire la sicurezza e il corretto funzionamento del server;</li>
                         <li>rilevare e prevenire eventuali abusi o accessi non autorizzati;</li>
                         <li>diagnosticare errori tecnici.</li>
                     </ul>
-                    <p class="mt-3">
-                        Non viene effettuata alcuna profilazione degli utenti né alcun trattamento a fini di marketing o commerciali.
+                    <p class="mt-4"><strong>Dati del modulo di contatto</strong> — trattati per:</p>
+                    <ul class="list-disc pl-6 mt-2 space-y-1">
+                        <li>rispondere alla richiesta di informazioni inviata dall'utente;</li>
+                        <li>organizzare e condurre una demo personalizzata del servizio;</li>
+                        <li>fornire informazioni commerciali su TicketFlow su esplicita richiesta.</li>
+                    </ul>
+                    <p class="mt-3 text-sm text-gray-500">
+                        I dati del modulo di contatto non vengono utilizzati per attività di marketing non richiesto, profilazione o cessione a terzi a fini commerciali.
                     </p>
                 </div>
 
                 <div>
                     <h2 class="text-xl font-semibold text-gray-900 mb-2">6. Base giuridica</h2>
-                    <p>
-                        Il trattamento dei log tecnici si basa sull'<strong>interesse legittimo</strong> del titolare (art. 6.1.f GDPR) per garantire la sicurezza del servizio, prevenire abusi e risolvere problemi tecnici.
-                    </p>
+                    <ul class="list-disc pl-6 mt-2 space-y-2">
+                        <li>
+                            <strong>Dati tecnici di navigazione</strong> — <em>interesse legittimo</em> del titolare (art. 6.1.f GDPR) per garantire la sicurezza del servizio e risolvere problemi tecnici.
+                        </li>
+                        <li>
+                            <strong>Dati del modulo di contatto</strong> — <em>consenso esplicito</em> dell'interessato (art. 6.1.a GDPR), prestato tramite la spunta obbligatoria al momento dell'invio del modulo. Il consenso può essere revocato in qualsiasi momento scrivendo a <a href="mailto:gportesi@gmail.com" class="text-amber-600 hover:underline">gportesi@gmail.com</a>.
+                        </li>
+                    </ul>
                 </div>
 
                 <div>
                     <h2 class="text-xl font-semibold text-gray-900 mb-2">7. Conservazione dei dati</h2>
-                    <p>
-                        <strong>I log tecnici (indirizzi IP, timestamp, richieste HTTP) sono conservati per un massimo di 7 giorni</strong> esclusivamente per finalità di sicurezza e diagnostica. Trascorso tale termine, vengono eliminati definitivamente.
-                    </p>
-                    <p class="mt-3 text-sm text-gray-500">
-                        In casi eccezionali (es. indagine su violazioni di sicurezza documentate), i log possono essere conservati più a lungo, limitatamente al tempo necessario per le attività investigative e comunque non oltre 30 giorni.
-                    </p>
+                    <ul class="list-disc pl-6 mt-2 space-y-2">
+                        <li>
+                            <strong>Log tecnici</strong> — conservati per un massimo di <strong>7 giorni</strong>, poi eliminati definitivamente. In caso di indagini su violazioni di sicurezza, non oltre 30 giorni.
+                        </li>
+                        <li>
+                            <strong>Dati del modulo di contatto</strong> — conservati per il tempo necessario a gestire la richiesta e, in caso di avvio di una trattativa commerciale, per tutta la durata della stessa e fino a <strong>12 mesi</strong> dall'ultimo contatto. Trascorso tale termine, i dati vengono eliminati salvo obbligo di legge.
+                        </li>
+                    </ul>
                 </div>
 
                 <div>

@@ -89,6 +89,15 @@ class Subscription extends Model
         return (int) max(0, min(100, round(($this->minutes_remaining / $totalMinutes) * 100)));
     }
 
+    /**
+     * Scala i minuti dalla subscription.
+     * I minuti possono scendere sotto zero (lavoro extra non coperto dal contratto).
+     */
+    public function deductMinutes(int $minutes): void
+    {
+        $this->decrement('minutes_remaining', $minutes);
+    }
+
     // ─── Relazioni ────────────────────────────────────────────────────────────
 
     public function company(): BelongsTo

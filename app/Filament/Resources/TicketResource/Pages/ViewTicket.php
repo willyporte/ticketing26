@@ -8,11 +8,13 @@ use App\Filament\Resources\TicketResource;
 use App\Models\Ticket;
 use App\Models\TicketAttachment;
 use App\Models\TicketReply;
+use App\Models\TimeEntry;
 use App\Models\User;
 use App\Notifications\TicketReplyAddedNotification;
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
@@ -20,6 +22,7 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
+use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Support\Facades\Storage;
 
 class ViewTicket extends ViewRecord
@@ -78,13 +81,36 @@ class ViewTicket extends ViewRecord
                 ->icon('heroicon-o-chat-bubble-left-right')
                 ->color('primary')
                 ->visible(fn (): bool => auth()->user()->can('createReply', $this->record))
-                ->form([
-                    Textarea::make('body')
-                        ->label(__('tickets.replies.body'))
-                        ->required()
-                        ->rows(5),
+                ->form(function () use ($acceptedMimeTypes): array {
+                    $user = auth()->user();
 
-                    FileUpload::make('reply_attachments')
+                    $fields = [
+                        Textarea::make('body')
+                            ->label(__('tickets.replies.body'))
+                            ->required()
+                            ->rows(5),
+                    ];
+
+                    // Campo minuti: visibile solo allo staff (non ai Client)
+                    if (! $user->isClient()) {
+                        $subscription      = $this->record->company?->activeSubscription();
+                        $minutesAvailable  = $subscription?->minutes_remaining ?? null;
+
+                        $hint = $minutesAvailable !== null
+                            ? __('time_entries.hints.available', ['minutes' => $minutesAvailable])
+                            : __('time_entries.hints.no_subscription');
+
+                        $fields[] = TextInput::make('minutes_spent')
+                            ->label(__('time_entries.fields.minutes_spent'))
+                            ->numeric()
+                            ->minValue(0)
+                            ->integer()
+                            ->nullable()
+                            ->hint($hint)
+                            ->hintColor($minutesAvailable !== null && $minutesAvailable <= 0 ? 'danger' : 'gray');
+                    }
+
+                    $fields[] = FileUpload::make('reply_attachments')
                         ->label(__('tickets.attachments.add'))
                         ->multiple()
                         ->maxFiles(10)
@@ -93,8 +119,10 @@ class ViewTicket extends ViewRecord
                         ->disk('local')
                         ->directory('attachments/temp')
                         ->visibility('private')
-                        ->storeFileNamesIn('reply_attachment_names'),
-                ])
+                        ->storeFileNamesIn('reply_attachment_names');
+
+                    return $fields;
+                })
                 ->action(function (array $data): void {
                     $reply = TicketReply::create([
                         'ticket_id' => $this->record->id,
@@ -138,6 +166,24 @@ class ViewTicket extends ViewRecord
 
                             $existing++;
                         }
+                    }
+
+                    // ── TimeEntry automatico se minuti inseriti dallo staff ───
+                    $minutesSpent = isset($data['minutes_spent']) && $data['minutes_spent'] > 0
+                        ? (int) $data['minutes_spent']
+                        : null;
+
+                    if ($minutesSpent && ! auth()->user()->isClient()) {
+                        TimeEntry::create([
+                            'ticket_id'     => $this->record->id,
+                            'user_id'       => auth()->id(),
+                            'minutes_spent' => $minutesSpent,
+                            'notes'         => null,
+                        ]);
+
+                        // Scala i minuti dalla subscription attiva dell'azienda
+                        $subscription = $this->record->company?->activeSubscription();
+                        $subscription?->deductMinutes($minutesSpent);
                     }
 
                     // ── Auto-transizione stato ────────────────────────────────
@@ -317,6 +363,22 @@ class ViewTicket extends ViewRecord
                         ->send();
                 }),
 
+            // ── Info cliente / abbonamento ────────────────────────────────────
+            Actions\Action::make('clientInfo')
+                ->label(__('tickets.actions.client_info'))
+                ->icon('heroicon-o-information-circle')
+                ->color('gray')
+                ->visible(fn (): bool => ! auth()->user()->isClient())
+                ->modalHeading(__('tickets.actions.client_info'))
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel(__('tickets.modal.close'))
+                ->modalContent(function (): ViewContract {
+                    $ticket       = $this->record->loadMissing(['creator', 'assignee', 'company.subscriptions.plan']);
+                    $subscription = $ticket->company?->activeSubscription()?->loadMissing('plan');
+
+                    return view('filament.modals.ticket-client-info', compact('ticket', 'subscription'));
+                }),
+
             // ── Modifica ticket ───────────────────────────────────────────────
             Actions\EditAction::make()
                 ->visible(fn (): bool => auth()->user()->can('update', $this->record)),
@@ -409,6 +471,28 @@ class ViewTicket extends ViewRecord
                         ->label(__('tickets.fields.updated_at'))
                         ->dateTime('d/m/Y H:i')
                         ->timezone('Europe/Rome'),
+
+                    // Minuti residui abbonamento — visibile solo allo staff
+                    TextEntry::make('company.id')
+                        ->label(__('tickets.fields.minutes_remaining'))
+                        ->hidden(fn (): bool => auth()->user()->isClient())
+                        ->badge()
+                        ->state(function (Ticket $record): string {
+                            $sub = $record->company?->activeSubscription();
+                            if (! $sub) {
+                                return __('tickets.modal.no_subscription');
+                            }
+                            $min = $sub->minutes_remaining;
+                            $pct = $sub->remainingPercentage();
+                            return "{$min} min ({$pct}%)";
+                        })
+                        ->color(function (Ticket $record): string {
+                            $sub = $record->company?->activeSubscription();
+                            if (! $sub) return 'gray';
+                            if ($sub->minutes_remaining <= 0) return 'danger';
+                            if ($sub->isBelowWarningThreshold()) return 'warning';
+                            return 'success';
+                        }),
                 ])
                 ->columns(2)
                 ->collapsible(),

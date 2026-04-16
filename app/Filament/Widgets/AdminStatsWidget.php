@@ -25,23 +25,28 @@ class AdminStatsWidget extends BaseWidget
         return [
             Stat::make(__('tickets.dashboard.open'), Ticket::where('status', TicketStatus::Open)->count())
                 ->icon('heroicon-o-folder-open')
-                ->color('info'),
+                ->color('info')
+                ->extraAttributes(['class' => 'stat-open']),
 
             Stat::make(__('tickets.dashboard.in_progress'), Ticket::where('status', TicketStatus::InProgress)->count())
                 ->icon('heroicon-o-arrow-path')
-                ->color('warning'),
+                ->color('warning')
+                ->extraAttributes(['class' => 'stat-in-progress']),
 
             Stat::make(__('tickets.dashboard.waiting_client'), Ticket::where('status', TicketStatus::WaitingClient)->count())
                 ->icon('heroicon-o-clock')
-                ->color('gray'),
+                ->color('gray')
+                ->extraAttributes(['class' => 'stat-waiting']),
 
             Stat::make(__('tickets.dashboard.resolved'), Ticket::where('status', TicketStatus::Resolved)->count())
                 ->icon('heroicon-o-check-circle')
-                ->color('success'),
+                ->color('success')
+                ->extraAttributes(['class' => 'stat-resolved']),
 
             Stat::make(__('tickets.dashboard.closed'), Ticket::where('status', TicketStatus::Closed)->count())
                 ->icon('heroicon-o-lock-closed')
-                ->color('danger'),
+                ->color('danger')
+                ->extraAttributes(['class' => 'stat-closed']),
         ];
     }
 }

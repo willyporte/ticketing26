@@ -75,8 +75,8 @@
 
         </div>
 
-        <div class="mt-12 rounded-2xl bg-amber-500 p-8 text-center text-white shadow-xl shadow-amber-500/20">
-            <p class="text-xl font-bold">TicketFlow risolve tutto questo — in un'unica piattaforma, per tutti.</p>
+        <div class="mt-12 text-center">
+            <p class="text-xl font-bold text-gray-900 dark:text-white">TicketFlow risolve tutto questo — in un'unica piattaforma, per tutti.</p>
         </div>
 
     </div>
@@ -365,19 +365,24 @@
 {{-- ═══════════════════════════════════════════════════════════════
      CTA FINALE
 ═══════════════════════════════════════════════════════════════ --}}
-<section class="bg-amber-500 py-20 dark:bg-amber-600 lg:py-28">
-    <div class="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-        <h2 class="mb-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+<section class="relative overflow-hidden bg-gray-50 py-20 dark:bg-gray-900 lg:py-28">
+
+    {{-- Stessi blob della hero home --}}
+    <div class="pointer-events-none absolute -top-40 -right-40 h-150 w-150 rounded-full bg-amber-400/20 blur-3xl dark:bg-amber-500/10" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute -bottom-40 -left-40 h-125 w-125 rounded-full bg-amber-300/20 blur-3xl dark:bg-amber-600/10" aria-hidden="true"></div>
+
+    <div class="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+        <h2 class="mb-4 text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
             Pronti a trasformare il vostro supporto?
         </h2>
-        <p class="mb-8 text-base leading-relaxed text-amber-100">
+        <p class="mb-8 text-base leading-relaxed text-gray-600 dark:text-gray-400">
             Mostriamo a te e al tuo team come TicketFlow si integra nel vostro flusso di lavoro in meno di 30 minuti. Demo gratuita, nessun impegno.
         </p>
         <div class="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a href="{{ route('contattaci') }}" class="inline-block rounded-xl bg-white px-10 py-4 text-base font-bold text-amber-600 shadow-xl shadow-amber-700/20 transition hover:bg-amber-50">
+            <a href="{{ route('contattaci') }}" class="rounded-xl bg-amber-500 px-10 py-4 text-base font-bold text-white shadow-lg shadow-amber-500/30 transition hover:bg-amber-600">
                 Richiedi la demo gratuita →
             </a>
-            <a href="{{ route('home') }}" class="inline-block rounded-xl border-2 border-white px-10 py-4 text-base font-semibold text-white transition hover:bg-amber-400">
+            <a href="{{ route('home') }}" class="rounded-xl border-2 border-amber-500 px-10 py-4 text-base font-semibold text-amber-600 transition hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-900/20">
                 Torna alla home
             </a>
         </div>
