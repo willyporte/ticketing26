@@ -13,7 +13,7 @@ use App\Models\User;
 use App\Notifications\TicketReplyAddedNotification;
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -88,10 +88,17 @@ class ViewTicket extends ViewRecord
                     $user = auth()->user();
 
                     $fields = [
-                        Textarea::make('body')
+                        RichEditor::make('body')
                             ->label(__('tickets.replies.body'))
                             ->required()
-                            ->rows(5),
+                            ->toolbarButtons([
+                                'bold', 'italic', 'underline', 'strike',
+                                'bulletList', 'orderedList',
+                                'blockquote', 'codeBlock',
+                                'link',
+                                'undo', 'redo',
+                            ])
+                            ->columnSpanFull(),
                     ];
 
                     // Campo minuti: visibile solo allo staff (non ai Client)
@@ -602,6 +609,7 @@ class ViewTicket extends ViewRecord
 
                             TextEntry::make('body')
                                 ->label(__('tickets.replies.body'))
+                                ->html()
                                 ->columnSpanFull(),
 
                             // Link allegati della risposta — visibile solo se presenti

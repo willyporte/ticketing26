@@ -23,7 +23,7 @@
                     <h2 class="text-xl font-semibold text-gray-900 mb-2">1. Titolare del trattamento</h2>
                     <p>
                         Il titolare del trattamento è <strong>Guillermo Portesi</strong>, contattabile all'indirizzo email:
-                        <a href="mailto:gportesi@gmail.com" class="text-amber-600 hover:underline">gportesi@gmail.com</a>.
+                        <a href="mailto:privacy@demostack.it" class="text-amber-600 hover:underline">privacy@demostack.it</a>.
                     </p>
                 </div>
 
@@ -96,7 +96,7 @@
                             <strong>Dati tecnici di navigazione</strong> — <em>interesse legittimo</em> del titolare (art. 6.1.f GDPR) per garantire la sicurezza del servizio e risolvere problemi tecnici.
                         </li>
                         <li>
-                            <strong>Dati del modulo di contatto</strong> — <em>consenso esplicito</em> dell'interessato (art. 6.1.a GDPR), prestato tramite la spunta obbligatoria al momento dell'invio del modulo. Il consenso può essere revocato in qualsiasi momento scrivendo a <a href="mailto:gportesi@gmail.com" class="text-amber-600 hover:underline">gportesi@gmail.com</a>.
+                            <strong>Dati del modulo di contatto</strong> — <em>consenso esplicito</em> dell'interessato (art. 6.1.a GDPR), prestato tramite la spunta obbligatoria al momento dell'invio del modulo. Il consenso può essere revocato in qualsiasi momento scrivendo a <a href="mailto:privacy@demostack.it" class="text-amber-600 hover:underline">privacy@demostack.it</a>.
                         </li>
                     </ul>
                 </div>
@@ -147,7 +147,7 @@
                         <li><strong>Portabilità</strong> – ricevere i dati in formato strutturato (dove tecnicamente possibile).</li>
                     </ul>
                     <p class="mt-3">
-                        Per esercitare i tuoi diritti, scrivi a <a href="mailto:gportesi@gmail.com" class="text-amber-600 hover:underline">gportesi@gmail.com</a>. Risponderemo entro 30 giorni.
+                        Per esercitare i tuoi diritti, scrivi a <a href="mailto:privacy@demostack.it" class="text-amber-600 hover:underline">privacy@demostack.it</a>. Risponderemo entro 30 giorni.
                     </p>
                     <p class="mt-3">
                         Se ritieni che il trattamento dei tuoi dati violi il GDPR, hai il diritto di proporre reclamo all'<strong>Autorità Garante per la protezione dei dati personali</strong>
